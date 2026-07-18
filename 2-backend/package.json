@@ -1,0 +1,17 @@
+{
+  "name": "medifind-backend",
+  "version": "1.0.0",
+  "description": "Secure Node.js Express server for MediFind Clinical OS",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^17.4.2",
+    "express": "^4.19.2",
+    "pg": "^8.11.5"
+  }
+}
