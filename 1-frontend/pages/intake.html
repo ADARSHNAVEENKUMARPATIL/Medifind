@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Inbound Stock Intake | MediFind</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+    <!-- Material Symbols -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#00685f",
+                        "primary-container": "#008378",
+                        "secondary": "#006c49",
+                        "secondary-container": "#6cf8bb",
+                        "background": "#f5faf8",
+                        "surface": "#f5faf8",
+                        "on-surface": "#171d1c",
+                        "on-surface-variant": "#3d4947",
+                        "outline-variant": "#bcc9c6",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-dim": "#d6dbd9",
+                        "surface-container-high": "#e4e9e7",
+                        "surface-tint": "#006a61",
+                        "tertiary": "#825100",
+                        "tertiary-fixed": "#ffddb8",
+                        "on-tertiary-fixed-variant": "#653e00",
+                        "error": "#ba1a1a",
+                        "error-container": "#ffdad6",
+                        "on-error-container": "#93000a",
+                        "surface-container-low": "#f0f5f2",
+                        "surface-variant": "#dee4e1"
+                    },
+                    borderRadius: {
+                        "lg": "0.5rem",
+                        "xl": "1rem"
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="../css/global.css" rel="stylesheet"/>
+    <link href="../css/dashboard.css" rel="stylesheet"/>
+</head>
+<body class="bg-background text-on-surface font-sans overflow-x-hidden min-h-screen dark:bg-[#111716] dark:text-[#edf2f0]">
+
+    <!-- SideNavBar Anchor -->
+    <aside class="fixed left-0 top-0 h-full flex flex-col p-4 h-screen w-64 border-r border-outline-variant/30 bg-white dark:bg-[#151c1b] transition-all duration-200 ease-in-out z-50 shadow-sm">
+        <div class="mb-8 px-2 flex items-center gap-3">
+            <span class="material-symbols-outlined text-primary text-3xl font-bold dark:text-secondary-container">health_and_safety</span>
+            <div>
+                <h1 class="font-headline-md text-base font-bold text-primary leading-none dark:text-[#6cf8bb]">MediFind</h1>
+            </div>
+        </div>
+        
+        <nav class="flex-grow space-y-2">
+            <!-- Dashboard -->
+            <a class="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant hover:bg-surface-container-low transition-colors rounded-lg dark:text-[#dee4e1] dark:hover:bg-white/5" href="dashboard.html">
+                <span class="material-symbols-outlined text-xl">dashboard</span>
+                <span class="text-xs uppercase tracking-wider">Dashboard</span>
+            </a>
+            <!-- Medicine Search -->
+            <a class="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant hover:bg-surface-container-low transition-colors rounded-lg dark:text-[#dee4e1] dark:hover:bg-white/5" href="search.html">
+                <span class="material-symbols-outlined text-xl">search</span>
+                <span class="text-xs uppercase tracking-wider">Medicine Search</span>
+            </a>
+            <!-- Stock Intake (Active) -->
+            <a class="flex items-center gap-3 px-4 py-2.5 bg-secondary-container text-on-secondary-container font-semibold rounded-lg shadow-sm border border-secondary/15 transition-all dark:bg-primary/20 dark:text-secondary-container" href="intake.html">
+                <span class="material-symbols-outlined text-xl">add_box</span>
+                <span class="text-xs uppercase tracking-wider">Stock Intake</span>
+            </a>
+            <!-- Stock Outtake -->
+            <a class="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant hover:bg-surface-container-low transition-colors rounded-lg dark:text-[#dee4e1] dark:hover:bg-white/5" href="outtake.html">
+                <span class="material-symbols-outlined text-xl">outbox</span>
+                <span class="text-xs uppercase tracking-wider">Stock Outtake</span>
+            </a>
+            <!-- Inventory Ledger -->
+            <a class="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant hover:bg-surface-container-low transition-colors rounded-lg dark:text-[#dee4e1] dark:hover:bg-white/5" href="ledger.html">
+                <span class="material-symbols-outlined text-xl">inventory_2</span>
+                <span class="text-xs uppercase tracking-wider">Inventory Ledger</span>
+            </a>
+        </nav>
+        
+        <div class="mt-auto pt-4 border-t border-outline-variant/30 flex items-center gap-3 px-2">
+            <div id="sidebar-avatar" class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container font-bold flex items-center justify-center text-sm shadow-sm dark:bg-primary/40 dark:text-[#6cf8bb]">
+                SC
+            </div>
+            <div class="overflow-hidden">
+                <p id="sidebar-name" class="text-xs font-semibold truncate text-slate-800 dark:text-white">Pharmacist Profile</p>
+                <p id="sidebar-role" class="text-[10px] text-outline truncate">Chief Pharmacist</p>
+            </div>
+        </div>
+    </aside>
+
+    <!-- TopAppBar Anchor -->
+    <header class="fixed top-0 left-64 right-0 h-16 flex justify-between items-center px-6 bg-white dark:bg-[#151c1b] border-b border-outline-variant/30 z-40 shadow-sm transition-all">
+        <div class="flex items-center gap-4 flex-1">
+            <h2 class="font-headline-md text-lg font-bold text-primary dark:text-[#6cf8bb]">Stock Inbound Registry</h2>
+        </div>
+        
+        <div class="flex items-center gap-4">
+            <!-- Theme Toggle -->
+            <button id="themeToggleBtn" class="p-2 rounded-lg text-on-surface-variant hover:text-primary transition-colors dark:text-[#dee4e1]">
+                <span class="material-symbols-outlined text-xl">contrast</span>
+            </button>
+            <button onclick="window.location.href='welcome.html'" class="text-on-surface-variant hover:text-red-600 transition-colors dark:text-[#dee4e1]" title="Lock Console">
+                <span class="material-symbols-outlined text-xl">lock</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Canvas -->
+    <main class="ml-64 pt-24 p-6 min-h-screen">
+        <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 animate-fade-in-up">
+            
+            <!-- Left: Intake Logger Form -->
+            <section class="lg:col-span-5 bg-white dark:bg-[#151c1b] border border-outline-variant/30 rounded-xl p-6 shadow-sm flex flex-col justify-between">
+                <div class="space-y-4">
+                    <div class="border-b border-outline-variant/20 pb-2.5 flex justify-between items-center">
+                        <div>
+                            <h3 class="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-wider">Log Inbound Shipment</h3>
+                            <p class="text-[10px] text-outline mt-0.5">Register new batch quantities to warehouse stock cells.</p>
+                        </div>
+                    </div>
+
+                    <!-- Intake Form -->
+                    <form id="intakeForm" class="space-y-3.5" onsubmit="return false;">
+                        
+                        <!-- Location Conflict Alert Banner -->
+                        <div id="locationConflictBox" class="hidden bg-red-50 dark:bg-red-950/20 border border-red-500/30 p-3.5 rounded-lg flex gap-2.5 items-start animate-bounce">
+                            <span class="material-symbols-outlined text-red-600 dark:text-red-400 text-lg">error</span>
+                            <div>
+                                <h4 class="text-[11px] font-bold text-red-800 dark:text-red-400 uppercase">Location Conflict</h4>
+                                <p id="locationConflictText" class="text-[10px] leading-relaxed text-red-700 dark:text-red-400 font-semibold mt-0.5">
+                                    Location Conflict! This shelf position is already allocated to [Existing Medicine Name]. Please choose an available coordinate or free up the shelf slot.
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <!-- Intake Registration Mode Toggle -->
+                        <div class="grid grid-cols-2 gap-2 p-1 bg-surface dark:bg-white/5 border border-outline-variant/30 rounded-lg mb-2">
+                            <button type="button" id="btnModeSelect" class="py-1.5 text-[10px] font-bold uppercase rounded-md bg-primary text-white shadow-sm transition-all">Existing Template</button>
+                            <button type="button" id="btnModeNew" class="py-1.5 text-[10px] font-bold uppercase rounded-md text-outline hover:bg-slate-50 dark:hover:bg-white/5 transition-all">New On-the-Fly</button>
+                        </div>
+
+                        <!-- Option A: Medicine Selection Dropdown (Visible by default) -->
+                        <div id="existingMedContainer">
+                            <label for="medSelect" class="block text-[9px] font-bold uppercase tracking-widest text-outline mb-1">Medication Template</label>
+                            <select id="medSelect" class="w-full bg-surface dark:bg-[#1a2221] border border-outline-variant/40 rounded-lg px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-primary focus:border-primary transition-all">
+                                <option value="" disabled selected>-- Select Registered Medicine --</option>
+                                <!-- Loaded dynamically -->
+                            </select>
+                        </div>
+
+                        <!-- Option B: On-the-Fly Direct Registration Fields (Hidden by default) -->
+                        <div id="newMedContainer" class="hidden space-y-3.5">
+                            <div>
+                                <label for="newName" class="block text-[9px] font-bold uppercase tracking-widest text-outline mb-1">Medicine Name</label>
+                                <input type="text" id="newName" placeholder="e.g. Ibuprofen 400mg" class="w-full bg-surface dark:bg-[#1a2221] border border-outline-variant/40 rounded-lg px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-primary focus:border-primary transition-all"/>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label for="newCategory" class="block text-[9px] font-bold uppercase tracking-widest text-outline mb-1">Category</label>
+                                    <select id="newCategory" class="w-full bg-surface dark:bg-[#1a2221] border border-outline-variant/40 rounded-lg px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-primary focus:border-primary transition-all">
+                                        <option value="Analgesics">Analgesics</option>
+                                        <option value="Antibiotics">Antibiotics</option>
+                                        <option value="Cardiovascular">Cardiovascular</option>
+                                        <option value="Diabetic Care">Diabetic Care</option>
+                                        <option value="General" selected>General</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="newParLimit" class="block text-[9px] font-bold uppercase tracking-widest text-outline mb-1">Par Limit</label>
+                                    <input type="number" id="newParLimit" min="1" value="100" class="w-full bg-surface dark:bg-[#1a2221] border border-outline-variant/40 rounded-lg px-3 py-2 text-xs font-bold font-mono focus:ring-2 focus:ring-primary focus:border-primary transition-all"/>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-3 gap-2">
+                                <div>
+                                    <label for="newRack" class="block text-[9px] font-bold uppercase tracking-widest text-outline mb-1">Rack</label>
+                                    <input type="text" id="newRack" placeholder="RACK A" value="RACK A" class="w-full bg-surface dark:bg-[#1a2221] border border-outline-variant/40 rounded-lg px-2 py-1.5 text-xs font-mono font-bold uppercase"/>
+                                </div>
+                                <div>
+                                    <label for="newShelf" class="block text-[9px] font-bold uppercase tracking-widest text-outline mb-1">Shelf</label>
+                                    <input type="text" id="newShelf" placeholder="SHELF A" value="SHELF A" class="w-full bg-surface dark:bg-[#1a2221] border border-outline-variant/40 rounded-lg px-2 py-1.5 text-xs font-mono font-bold uppercase"/>
+                                </div>
+                                <div>
+                                    <label for="newBox" class="block text-[9px] font-bold uppercase tracking-widest text-outline mb-1">Box</label>
+                                    <input type="text" id="newBox" placeholder="BOX 01" value="BOX 01" class="w-full bg-surface dark:bg-[#1a2221] border border-outline-variant/40 rounded-lg px-2 py-1.5 text-xs font-mono font-bold uppercase"/>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-2 pt-1">
+                                <input type="checkbox" id="newColdStorage" class="rounded border-outline-variant text-primary focus:ring-primary h-4 w-4"/>
+                                <label for="newColdStorage" class="text-[10px] font-bold text-outline uppercase tracking-wider cursor-pointer">Requires Fridge Cold Chain</label>
+                            </div>
+                        </div>
+
+                        <!-- SKU & Batch Code -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label for="batchNo" class="block text-[9px] font-bold uppercase tracking-widest text-outline mb-1">Batch SKU Number</label>
+                                <input type="text" id="batchNo" readonly placeholder="PH-XXXX-XX" class="w-full bg-surface-container dark:bg-surface-dim border border-outline-variant/40 rounded-lg px-3 py-2 text-xs font-bold font-mono text-outline uppercase focus:ring-2 focus:ring-primary focus:border-primary transition-all"/>
+                            </div>
+                            <div>
+                                <label for="receivedQty" class="block text-[9px] font-bold uppercase tracking-widest text-outline mb-1">Inbound Quantity</label>
+                                <input type="number" id="receivedQty" min="1" max="10000" placeholder="e.g. 150" required class="w-full bg-surface dark:bg-[#1a2221] border border-outline-variant/40 rounded-lg px-3 py-2 text-xs font-bold font-mono focus:ring-2 focus:ring-primary focus:border-primary transition-all"/>
+                            </div>
+                        </div>
+
+                        <!-- Expiry Date & Warning alert panel -->
+                        <div>
+                            <label for="expiryDate" class="block text-[9px] font-bold uppercase tracking-widest text-outline mb-1">Expiration Date</label>
+                            <input type="date" id="expiryDate" required class="w-full bg-surface dark:bg-[#1a2221] border border-outline-variant/40 rounded-lg px-3 py-2 text-xs font-bold font-mono focus:ring-2 focus:ring-primary focus:border-primary transition-all"/>
+                        </div>
+
+                        <!-- Live Expiry validation alert box -->
+                        <div id="expiryWarningBox" class="hidden bg-amber-50 dark:bg-amber-950/20 border border-amber-500/30 p-3 rounded-lg flex gap-2.5 items-start animate-pulse">
+                            <span class="material-symbols-outlined text-amber-600 dark:text-amber-400 text-lg">warning</span>
+                            <p id="expiryWarningText" class="text-[10px] leading-relaxed text-amber-800 dark:text-amber-400 font-semibold">
+                                Batch will expire in 12 days! Flagging for urgent shelf-rotation.
+                            </p>
+                        </div>
+
+                        <!-- Storage cell read-only coordinates visualizer -->
+                        <div class="bg-surface-container-low dark:bg-white/5 border border-outline-variant/20 rounded-lg p-3 space-y-2">
+                            <div class="text-[9px] font-bold text-outline uppercase tracking-wider">Storage Coordinates Mapping</div>
+                            <div class="grid grid-cols-3 gap-2 text-center text-xs font-mono font-black">
+                                <div class="bg-white dark:bg-[#151c1b] border rounded py-1">
+                                    <div class="text-[8px] text-outline font-normal uppercase">Rack</div>
+                                    <span id="coordRack">N/A</span>
+                                </div>
+                                <div class="bg-white dark:bg-[#151c1b] border rounded py-1">
+                                    <div class="text-[8px] text-outline font-normal uppercase">Shelf</div>
+                                    <span id="coordShelf">N/A</span>
+                                </div>
+                                <div class="bg-white dark:bg-[#151c1b] border rounded py-1">
+                                    <div class="text-[8px] text-outline font-normal uppercase">Box</div>
+                                    <span id="coordBox">N/A</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button id="registerIntakeBtn" class="w-full bg-primary hover:bg-primary-container text-white dark:bg-secondary-container dark:text-[#111716] dark:hover:bg-[#4edea3] font-bold py-3 rounded-lg text-xs uppercase tracking-wider shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-1.5 pt-3">
+                            <span class="material-symbols-outlined text-base">cloud_upload</span>
+                            Authorize Inbound Receipt
+                        </button>
+
+                    </form>
+                </div>
+            </section>
+
+            <!-- Right: Today's Log Ticker -->
+            <section class="lg:col-span-7 bg-white dark:bg-[#151c1b] border border-outline-variant/30 rounded-xl overflow-hidden flex flex-col h-full shadow-sm">
+                <div class="px-5 py-4 border-b border-outline-variant/20 flex justify-between items-center bg-surface-container-low dark:bg-[#1a2221]">
+                    <h3 class="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-wider">Active Ward Intake Ticker</h3>
+                    <div class="text-[10px] text-primary dark:text-[#6cf8bb] font-bold uppercase tracking-wider flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping"></span>
+                        Live Session Feed
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto flex-grow">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 dark:bg-[#1c2624] text-outline text-[10px] font-bold uppercase tracking-wider border-b border-outline-variant/20">
+                                <th class="px-5 py-3">Time</th>
+                                <th class="px-5 py-3">Medicine</th>
+                                <th class="px-5 py-3">SKU</th>
+                                <th class="px-5 py-3 text-right">Inbound Qty</th>
+                                <th class="px-5 py-3">Assigned Cell</th>
+                            </tr>
+                        </thead>
+                        <tbody id="today-intake-body">
+                            <tr>
+                                <td colspan="5" class="px-5 py-8 text-center text-xs text-outline italic">No batch movements logged in this ward session.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- State Broker scripts -->
+    <script src="../shared.js"></script>
+    <script>
+        let activeMedicines = [];
+        let intakeMode = "select"; // "select" or "new"
+
+        const btnModeSelect = document.getElementById("btnModeSelect");
+        const btnModeNew = document.getElementById("btnModeNew");
+        const existingMedContainer = document.getElementById("existingMedContainer");
+        const newMedContainer = document.getElementById("newMedContainer");
+
+        const medSelect = document.getElementById("medSelect");
+        const batchNoInput = document.getElementById("batchNo");
+        const receivedInput = document.getElementById("receivedQty");
+        const expiryDateInput = document.getElementById("expiryDate");
+        
+        const coordRack = document.getElementById("coordRack");
+        const coordShelf = document.getElementById("coordShelf");
+        const coordBox = document.getElementById("coordBox");
+
+        const warningBox = document.getElementById("expiryWarningBox");
+        const warningText = document.getElementById("expiryWarningText");
+        
+        const registerBtn = document.getElementById("registerIntakeBtn");
+
+        // New registration input fields
+        const newNameInput = document.getElementById("newName");
+        const newCategorySelect = document.getElementById("newCategory");
+        const newParLimitInput = document.getElementById("newParLimit");
+        const newRackInput = document.getElementById("newRack");
+        const newShelfInput = document.getElementById("newShelf");
+        const newBoxInput = document.getElementById("newBox");
+        const newColdStorageCheckbox = document.getElementById("newColdStorage");
+
+        document.addEventListener("DOMContentLoaded", () => {
+            loadMedicineTemplates();
+
+            medSelect.addEventListener("change", populateCoordinates);
+            expiryDateInput.addEventListener("change", checkExpiryRisk);
+
+            registerBtn.addEventListener("click", processIntake);
+
+            // Mode toggle buttons click handlers
+            btnModeSelect.addEventListener("click", () => {
+                intakeMode = "select";
+                btnModeSelect.className = "py-1.5 text-[10px] font-bold uppercase rounded-md bg-primary text-white shadow-sm transition-all";
+                btnModeNew.className = "py-1.5 text-[10px] font-bold uppercase rounded-md text-outline hover:bg-slate-50 dark:hover:bg-white/5 transition-all";
+                existingMedContainer.classList.remove("hidden");
+                newMedContainer.classList.add("hidden");
+                
+                // Reset SKU to readonly and clear it
+                batchNoInput.readOnly = true;
+                batchNoInput.placeholder = "PH-XXXX-XX";
+                batchNoInput.value = "";
+                batchNoInput.className = "w-full bg-surface-container dark:bg-surface-dim border border-outline-variant/40 rounded-lg px-3 py-2 text-xs font-bold font-mono text-outline uppercase focus:ring-2 focus:ring-primary focus:border-primary transition-all";
+            });
+
+            btnModeNew.addEventListener("click", () => {
+                intakeMode = "new";
+                btnModeNew.className = "py-1.5 text-[10px] font-bold uppercase rounded-md bg-primary text-white shadow-sm transition-all";
+                btnModeSelect.className = "py-1.5 text-[10px] font-bold uppercase rounded-md text-outline hover:bg-slate-50 dark:hover:bg-white/5 transition-all";
+                existingMedContainer.classList.add("hidden");
+                newMedContainer.classList.remove("hidden");
+                
+                // Allow entering custom SKU
+                batchNoInput.readOnly = false;
+                batchNoInput.placeholder = "e.g. PH-1002-AX";
+                batchNoInput.value = "";
+                batchNoInput.className = "w-full bg-surface dark:bg-[#1a2221] border border-outline-variant/40 rounded-lg px-3 py-2 text-xs font-bold font-mono text-slate-800 dark:text-white uppercase focus:ring-2 focus:ring-primary focus:border-primary transition-all";
+            });
+        });
+
+        function loadMedicineTemplates() {
+            const storeConfig = PharmaDB.getStoreConfig();
+            const storeId = storeConfig.id || 1;
+
+            fetch('/api/search', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ store_id: storeId })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    activeMedicines = data.medicines;
+                    medSelect.innerHTML = `<option value="" disabled selected>-- Select Registered Medicine --</option>`;
+                    
+                    activeMedicines.forEach(med => {
+                        const opt = document.createElement("option");
+                        opt.value = med.sku;
+                        opt.textContent = `${med.name} (${med.category})`;
+                        medSelect.appendChild(opt);
+                    });
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                showToast("Connection error while loading medicine templates.", false);
+            });
+        }
+
+        function populateCoordinates() {
+            const sku = medSelect.value;
+            const med = activeMedicines.find(m => m.sku === sku);
+
+            if (med) {
+                batchNoInput.value = med.sku;
+                coordRack.textContent = med.rack;
+                coordShelf.textContent = med.shelf;
+                coordBox.textContent = med.box;
+            }
+        }
+
+        function checkExpiryRisk() {
+            const dateVal = expiryDateInput.value;
+            if (!dateVal) {
+                warningBox.classList.add("hidden");
+                return;
+            }
+
+            const expiry = new Date(dateVal);
+            const today = new Date();
+            const diffTime = expiry - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+            if (diffDays <= 0) {
+                warningText.innerHTML = `<strong>CRITICAL ERROR:</strong> This batch is already EXPIRED by ${Math.abs(diffDays)} days! Quarantine immediately.`;
+                warningBox.className = "bg-red-50 dark:bg-red-950/20 border border-red-500/30 p-3 rounded-lg flex gap-2.5 items-start animate-bounce";
+                warningBox.classList.remove("hidden");
+            } else if (diffDays <= 30) {
+                warningText.innerHTML = `<strong>WARNING ALERT:</strong> Batch will expire in ${diffDays} days! Flagging for urgent shelf-rotation.`;
+                warningBox.className = "bg-amber-50 dark:bg-amber-950/20 border border-amber-500/30 p-3 rounded-lg flex gap-2.5 items-start animate-pulse";
+                warningBox.classList.remove("hidden");
+            } else {
+                warningBox.classList.add("hidden");
+            }
+        }
+
+        function processIntake() {
+            let sku = "";
+            let qty = parseInt(receivedInput.value);
+            let expiry = expiryDateInput.value;
+
+            if (isNaN(qty) || qty <= 0 || !expiry) {
+                showToast("Please fully complete all quantity and expiry fields.", false);
+                return;
+            }
+
+            const storeConfig = PharmaDB.getStoreConfig();
+            const storeId = storeConfig.id || 1;
+            const activeUser = PharmaDB.getActiveUser();
+
+            let intakePayload = {
+                store_id: storeId,
+                pharmacist_id: activeUser.id || 1,
+                qty: qty,
+                expiry_date: expiry
+            };
+
+            let medName = "";
+            let finalRack = "";
+            let finalShelf = "";
+            let finalBox = "";
+
+            if (intakeMode === "select") {
+                sku = medSelect.value;
+                if (!sku) {
+                    showToast("Please choose an existing medicine template.", false);
+                    return;
+                }
+                const med = activeMedicines.find(m => m.sku === sku);
+                if (!med) return;
+                
+                intakePayload.sku = sku;
+                medName = med.name;
+                finalRack = med.rack;
+                finalShelf = med.shelf;
+                finalBox = med.box;
+            } else {
+                sku = batchNoInput.value.trim().toUpperCase();
+                const newName = newNameInput.value.trim();
+                const newCategory = newCategorySelect.value;
+                const newPar = parseInt(newParLimitInput.value);
+                const newRack = newRackInput.value.trim().toUpperCase();
+                const newShelf = newShelfInput.value.trim().toUpperCase();
+                const newBox = newBoxInput.value.trim().toUpperCase();
+                const newCold = newColdStorageCheckbox.checked;
+
+                if (!sku || !newName || !newRack || !newShelf || !newBox || isNaN(newPar)) {
+                    showToast("Please fully complete all on-the-fly medicine details.", false);
+                    return;
+                }
+
+                intakePayload.sku = sku;
+                intakePayload.name = newName;
+                intakePayload.category = newCategory;
+                intakePayload.par_limit = newPar;
+                intakePayload.rack = newRack;
+                intakePayload.shelf = newShelf;
+                intakePayload.box = newBox;
+                intakePayload.cold_storage = newCold;
+
+                medName = newName;
+                finalRack = newRack;
+                finalShelf = newShelf;
+                finalBox = newBox;
+            }
+
+            resetLocationConflictAlert();
+
+            fetch('/api/intake', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(intakePayload)
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    showToast(`Successfully registered ${qty} units of ${medName}!`);
+
+                    // Add to Today's Intake Log Visual Table Grid
+                    const tableBody = document.getElementById("today-intake-body");
+                    if (tableBody.innerHTML.includes("No batch movements logged")) {
+                        tableBody.innerHTML = "";
+                    }
+
+                    const now = new Date();
+                    const timeStr = now.toTimeString().split(" ")[0];
+
+                    const row = document.createElement("tr");
+                    row.className = "hover:bg-surface-container-low/30 dark:hover:bg-white/5 transition-colors border-b border-outline-variant/10";
+                    row.innerHTML = `
+                        <td class="px-5 py-3 font-mono text-[11px] text-outline">${timeStr}</td>
+                        <td class="px-5 py-3 font-bold text-slate-800 dark:text-white">${medName}</td>
+                        <td class="px-5 py-3 font-mono font-semibold">${sku}</td>
+                        <td class="px-5 py-3 text-right font-mono font-bold text-secondary dark:text-emerald-400">+${qty.toLocaleString()}</td>
+                        <td class="px-5 py-3 font-mono font-bold text-primary dark:text-[#6cf8bb]">${finalRack}-${finalShelf.replace("SHELF ", "")}</td>
+                    `;
+                    tableBody.insertBefore(row, tableBody.firstChild);
+
+                    // Reset form fields
+                    medSelect.value = "";
+                    batchNoInput.value = "";
+                    receivedInput.value = "";
+                    expiryDateInput.value = "";
+                    warningBox.classList.add("hidden");
+                    
+                    coordRack.textContent = "N/A";
+                    coordShelf.textContent = "N/A";
+                    coordBox.textContent = "N/A";
+
+                    newNameInput.value = "";
+                    newParLimitInput.value = "100";
+                    newColdStorageCheckbox.checked = false;
+
+                    // Re-load templates to capture updated stocks
+                    loadMedicineTemplates();
+                } else {
+                    if (data.conflict) {
+                        triggerLocationConflictAlert(data.occupiedByName);
+                    } else {
+                        showToast(data.message || "Failed to process intake batch registration.", false);
+                    }
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                showToast("Connection error while processing intake registration.", false);
+            });
+        }
+
+        function triggerLocationConflictAlert(occupiedName) {
+            newRackInput.classList.add("border-red-500", "focus:ring-red-500", "focus:border-red-500");
+            newShelfInput.classList.add("border-red-500", "focus:ring-red-500", "focus:border-red-500");
+            newBoxInput.classList.add("border-red-500", "focus:ring-red-500", "focus:border-red-500");
+
+            const conflictBox = document.getElementById("locationConflictBox");
+            const conflictText = document.getElementById("locationConflictText");
+            if (conflictBox && conflictText) {
+                conflictText.innerHTML = `Location Conflict! This shelf position is already allocated to <strong>${occupiedName}</strong>. Please choose an available coordinate or free up the shelf slot.`;
+                conflictBox.classList.remove("hidden");
+            }
+            showToast(`Location Conflict! Position already allocated to ${occupiedName}.`, false);
+        }
+
+        function resetLocationConflictAlert() {
+            newRackInput.classList.remove("border-red-500", "focus:ring-red-500", "focus:border-red-500");
+            newShelfInput.classList.remove("border-red-500", "focus:ring-red-500", "focus:border-red-500");
+            newBoxInput.classList.remove("border-red-500", "focus:ring-red-500", "focus:border-red-500");
+            
+            const conflictBox = document.getElementById("locationConflictBox");
+            if (conflictBox) {
+                conflictBox.classList.add("hidden");
+            }
+        }
+
+
+    </script>
+</body>
+</html>

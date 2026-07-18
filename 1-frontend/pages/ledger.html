@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Master Inventory Ledger | MediFind</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+    <!-- Material Symbols -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#00685f",
+                        "primary-container": "#008378",
+                        "secondary": "#006c49",
+                        "secondary-container": "#6cf8bb",
+                        "background": "#f5faf8",
+                        "surface": "#f5faf8",
+                        "on-surface": "#171d1c",
+                        "on-surface-variant": "#3d4947",
+                        "outline-variant": "#bcc9c6",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-dim": "#d6dbd9",
+                        "surface-container-high": "#e4e9e7",
+                        "surface-tint": "#006a61",
+                        "tertiary": "#825100",
+                        "tertiary-fixed": "#ffddb8",
+                        "on-tertiary-fixed-variant": "#653e00",
+                        "error": "#ba1a1a",
+                        "error-container": "#ffdad6",
+                        "on-error-container": "#93000a",
+                        "surface-container-low": "#f0f5f2",
+                        "surface-variant": "#dee4e1"
+                    },
+                    borderRadius: {
+                        "lg": "0.5rem",
+                        "xl": "1rem"
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="../css/global.css" rel="stylesheet"/>
+    <link href="../css/dashboard.css" rel="stylesheet"/>
+    <style>
+        @media print {
+            /* Hide navigation sidebars, headers, action buttons, and slide drawers */
+            aside, header, #exportPdfBtn, section:first-of-type, #detailsDrawer, button {
+                display: none !important;
+            }
+            
+            /* Reset full canvas layout offsets and margins */
+            main {
+                margin-left: 0 !important;
+                padding-top: 0 !important;
+                padding: 0 !important;
+                width: 100% !important;
+            }
+            
+            /* Remove aesthetic card shadows and borders for printer compliance */
+            section {
+                border: none !important;
+                box-shadow: none !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            
+            /* Enforce maximum background readability for standard paper ink */
+            body {
+                background-color: #ffffff !important;
+                color: #000000 !important;
+            }
+        }
+    </style>
+</head>
+<body class="bg-background text-on-surface font-sans overflow-x-hidden min-h-screen dark:bg-[#111716] dark:text-[#edf2f0]">
+
+    <!-- SideNavBar Anchor -->
+    <aside class="fixed left-0 top-0 h-full flex flex-col p-4 h-screen w-64 border-r border-outline-variant/30 bg-white dark:bg-[#151c1b] transition-all duration-200 ease-in-out z-50 shadow-sm">
+        <div class="mb-8 px-2 flex items-center gap-3">
+            <span class="material-symbols-outlined text-primary text-3xl font-bold dark:text-secondary-container">health_and_safety</span>
+            <div>
+                <h1 class="font-headline-md text-base font-bold text-primary leading-none dark:text-[#6cf8bb]">MediFind</h1>
+            </div>
+        </div>
+        
+        <nav class="flex-grow space-y-2">
+            <!-- Dashboard -->
+            <a class="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant hover:bg-surface-container-low transition-colors rounded-lg dark:text-[#dee4e1] dark:hover:bg-white/5" href="dashboard.html">
+                <span class="material-symbols-outlined text-xl">dashboard</span>
+                <span class="text-xs uppercase tracking-wider">Dashboard</span>
+            </a>
+            <!-- Medicine Search -->
+            <a class="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant hover:bg-surface-container-low transition-colors rounded-lg dark:text-[#dee4e1] dark:hover:bg-white/5" href="search.html">
+                <span class="material-symbols-outlined text-xl">search</span>
+                <span class="text-xs uppercase tracking-wider">Medicine Search</span>
+            </a>
+            <!-- Stock Intake -->
+            <a class="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant hover:bg-surface-container-low transition-colors rounded-lg dark:text-[#dee4e1] dark:hover:bg-white/5" href="intake.html">
+                <span class="material-symbols-outlined text-xl">add_box</span>
+                <span class="text-xs uppercase tracking-wider">Stock Intake</span>
+            </a>
+            <!-- Stock Outtake -->
+            <a class="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant hover:bg-surface-container-low transition-colors rounded-lg dark:text-[#dee4e1] dark:hover:bg-white/5" href="outtake.html">
+                <span class="material-symbols-outlined text-xl">outbox</span>
+                <span class="text-xs uppercase tracking-wider">Stock Outtake</span>
+            </a>
+            <!-- Inventory Ledger (Active) -->
+            <a class="flex items-center gap-3 px-4 py-2.5 bg-secondary-container text-on-secondary-container font-semibold rounded-lg shadow-sm border border-secondary/15 transition-all dark:bg-primary/20 dark:text-secondary-container" href="ledger.html">
+                <span class="material-symbols-outlined text-xl">inventory_2</span>
+                <span class="text-xs uppercase tracking-wider">Inventory Ledger</span>
+            </a>
+        </nav>
+        
+        <div class="mt-auto pt-4 border-t border-outline-variant/30 flex items-center gap-3 px-2">
+            <div id="sidebar-avatar" class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container font-bold flex items-center justify-center text-sm shadow-sm dark:bg-primary/40 dark:text-[#6cf8bb]">
+                SC
+            </div>
+            <div class="overflow-hidden">
+                <p id="sidebar-name" class="text-xs font-semibold truncate text-slate-800 dark:text-white">Pharmacist Profile</p>
+                <p id="sidebar-role" class="text-[10px] text-outline truncate">Chief Pharmacist</p>
+            </div>
+        </div>
+    </aside>
+
+    <!-- TopAppBar Anchor -->
+    <header class="fixed top-0 left-64 right-0 h-16 flex justify-between items-center px-6 bg-white dark:bg-[#151c1b] border-b border-outline-variant/30 z-40 shadow-sm transition-all">
+        <div class="flex items-center gap-4 flex-1">
+            <h2 class="font-headline-md text-lg font-bold text-primary dark:text-[#6cf8bb]">Master Audits Matrix</h2>
+        </div>
+        
+        <div class="flex items-center gap-4">
+            <!-- Theme Toggle -->
+            <button id="themeToggleBtn" class="p-2 rounded-lg text-on-surface-variant hover:text-primary transition-colors dark:text-[#dee4e1]">
+                <span class="material-symbols-outlined text-xl">contrast</span>
+            </button>
+            <button onclick="window.location.href='welcome.html'" class="text-on-surface-variant hover:text-red-600 transition-colors dark:text-[#dee4e1]" title="Lock Console">
+                <span class="material-symbols-outlined text-xl">lock</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Canvas -->
+    <main class="ml-64 pt-24 p-6 min-h-screen">
+        <div class="max-w-6xl mx-auto space-y-6 animate-fade-in-up">
+            
+            <!-- Filter Actions Header -->
+            <section class="bg-white dark:bg-[#151c1b] border border-outline-variant/30 rounded-xl p-5 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div class="flex flex-wrap gap-2">
+                    <button class="ledger-filter bg-primary text-white font-bold px-3.5 py-1.5 rounded-lg text-[10px] uppercase transition-all shadow-sm" data-filter="All">All Stocks</button>
+                    <button class="ledger-filter bg-surface hover:bg-slate-100 border border-outline-variant/30 text-outline font-bold px-3.5 py-1.5 rounded-lg text-[10px] uppercase transition-all dark:bg-white/5 dark:hover:bg-white/10" data-filter="Critical">Stockouts / Low</button>
+                    <button class="ledger-filter bg-surface hover:bg-slate-100 border border-outline-variant/30 text-outline font-bold px-3.5 py-1.5 rounded-lg text-[10px] uppercase transition-all dark:bg-white/5 dark:hover:bg-white/10" data-filter="Expiry">Expiry Risk (&lt;30d)</button>
+                    <button class="ledger-filter bg-surface hover:bg-slate-100 border border-outline-variant/30 text-outline font-bold px-3.5 py-1.5 rounded-lg text-[10px] uppercase transition-all dark:bg-white/5 dark:hover:bg-white/10" data-filter="Cold">Fridge Cold Chain</button>
+                </div>
+                
+                <div class="flex items-center gap-3">
+                    <button id="exportPdfBtn" onclick="window.print()" class="bg-white dark:bg-white/5 border border-outline-variant/40 hover:bg-slate-50 dark:hover:bg-white/10 rounded-lg p-2 flex items-center gap-1.5 text-xs font-bold text-outline transition-all shadow-sm">
+                        <span class="material-symbols-outlined text-base">picture_as_pdf</span>
+                        Export PDF
+                    </button>
+                </div>
+            </section>
+
+            <!-- Master Ledger Data Table -->
+            <section class="bg-white dark:bg-[#151c1b] border border-outline-variant/30 rounded-xl overflow-hidden shadow-sm">
+                <div class="p-5 border-b border-outline-variant/20 bg-surface-container-low dark:bg-[#1a2221] flex justify-between items-center">
+                    <h3 class="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-wider">Full Inventory Locator Matrix</h3>
+                    <span class="text-[10px] text-outline font-medium italic">Click rows to open batch details drawer.</span>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead>
+                            <tr class="bg-surface/50 dark:bg-white/5 border-b border-outline-variant/30 text-[9px] font-bold text-outline uppercase tracking-wider">
+                                <th class="px-6 py-4 cursor-pointer hover:bg-slate-100 dark:hover:bg-white/5 transition-colors" id="sort-name">Medicine Name <span class="material-symbols-outlined text-[12px] align-middle">unfold_more</span></th>
+                                <th class="px-6 py-4">Storage Coordinates</th>
+                                <th class="px-6 py-4 cursor-pointer hover:bg-slate-100 dark:hover:bg-white/5 transition-colors text-right" id="sort-qty">Stock Quantity <span class="material-symbols-outlined text-[12px] align-middle">unfold_more</span></th>
+                                <th class="px-6 py-4 cursor-pointer hover:bg-slate-100 dark:hover:bg-white/5 transition-colors" id="sort-expiry">Expiry Date <span class="material-symbols-outlined text-[12px] align-middle">unfold_more</span></th>
+                                <th class="px-6 py-4">Status Class</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ledger-table-body" class="divide-y divide-outline-variant/20">
+                            <tr>
+                                <td colspan="5" class="px-6 py-8 text-center text-xs text-outline italic">Loading ledger inventory matrix...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="px-6 py-4 border-t border-outline-variant/20 flex justify-between items-center bg-surface-container-lowest dark:bg-[#1a2221]">
+                    <p id="tablePaginationText" class="text-[10px] text-outline font-medium">Showing 0 of 0 localized medicine templates</p>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Slide-in Details Drawer from Right side -->
+    <div id="detailsDrawer" class="fixed inset-y-0 right-0 w-full max-w-sm bg-white dark:bg-[#151c1b] border-l border-outline-variant/30 shadow-2xl z-[100] transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col justify-between">
+        
+        <!-- Drawer Header -->
+        <div class="bg-primary dark:bg-[#08423c] p-5 text-white flex justify-between items-center shrink-0">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-lg">inventory</span>
+                <div>
+                    <h3 id="drawerMedTitle" class="text-xs font-bold font-headline-md uppercase tracking-wider leading-none">Paracetamol 500mg</h3>
+                    <p id="drawerSku" class="text-[9px] text-white/70 font-mono mt-1">SKU: PH-7729-XC</p>
+                </div>
+            </div>
+            <button id="closeDrawerBtn" class="p-1 rounded hover:bg-white/10 transition-colors">
+                <span class="material-symbols-outlined text-white">close</span>
+            </button>
+        </div>
+
+        <!-- Drawer Content Layout -->
+        <div class="flex-grow p-6 space-y-6 overflow-y-auto">
+            
+            <!-- Statistics widget -->
+            <div class="space-y-2">
+                <div class="flex justify-between items-end">
+                    <p class="text-[9px] font-bold text-outline uppercase tracking-wider">Storage Capacity level</p>
+                    <span id="drawerQtyPct" class="text-xs font-black font-mono text-primary dark:text-[#6cf8bb]">80%</span>
+                </div>
+                <div class="h-2 w-full bg-surface dark:bg-white/15 rounded-full overflow-hidden shadow-inner">
+                    <div id="drawerProgressBar" class="h-full bg-primary" style="width: 80%"></div>
+                </div>
+                <div class="flex justify-between text-[10px] text-outline pt-1 font-semibold">
+                    <span>In-Stock: <strong id="drawerCurrentQty" class="text-slate-700 dark:text-white">400</strong></span>
+                    <span>Par Threshold Limit: <strong id="drawerParQty" class="text-slate-700 dark:text-white">500</strong></span>
+                </div>
+            </div>
+
+            <!-- Expiry Warning Notification Banner -->
+            <div id="drawerExpiryAlertCard" class="bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-500/20 rounded-xl p-4 shadow-sm flex items-start gap-3">
+                <span id="drawerExpiryIcon" class="material-symbols-outlined text-emerald-600 dark:text-emerald-400 text-lg">check_circle</span>
+                <div class="space-y-0.5">
+                    <h4 id="drawerExpiryDays" class="text-sm font-black text-emerald-600 dark:text-emerald-400 mt-0.5">180 Days Remaining</h4>
+                    <p id="drawerExpiryText" class="text-[10px] leading-relaxed text-outline">Healthy shelf life. Standard room climate conditions validated.</p>
+                </div>
+            </div>
+
+            <!-- Absolute Coordinates mapping -->
+            <div class="bg-surface dark:bg-white/5 border border-outline-variant/35 rounded-xl p-4 space-y-3 shadow-inner">
+                <span class="text-[10px] font-bold text-primary dark:text-[#6cf8bb] uppercase tracking-wider block border-b border-outline-variant/20 pb-1.5">Shelf Address Coordinates</span>
+                
+                <div class="grid grid-cols-3 gap-2 text-center text-xs font-mono font-black">
+                    <div class="bg-white dark:bg-[#151c1b] border rounded-lg py-2">
+                        <span class="text-[8px] text-outline font-normal uppercase block mb-0.5">Rack</span>
+                        <span id="drawerRack">R-04</span>
+                    </div>
+                    <div class="bg-white dark:bg-[#151c1b] border rounded-lg py-2">
+                        <span class="text-[8px] text-outline font-normal uppercase block mb-0.5">Shelf</span>
+                        <span id="drawerShelf">SH-A</span>
+                    </div>
+                    <div class="bg-white dark:bg-[#151c1b] border rounded-lg py-2">
+                        <span class="text-[8px] text-outline font-normal uppercase block mb-0.5">Box</span>
+                        <span id="drawerBox">BX-12</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Drawer Footer with Reorder Actions -->
+        <div id="drawerFooter" class="hidden p-5 border-t border-outline-variant/25 bg-surface dark:bg-[#1a2221] shrink-0 space-y-3">
+            <!-- New Expired Disposal Box -->
+            <div id="drawerDisposalBox" class="hidden bg-red-50 dark:bg-red-950/20 border border-red-500/30 rounded-xl p-4 space-y-2.5 mb-2">
+                <p class="text-[10px] font-bold text-red-600 dark:text-red-400 uppercase tracking-wider block border-b border-red-500/20 pb-1.5 flex items-center gap-1">
+                    <span class="material-symbols-outlined text-sm">dangerous</span>
+                    Disposal & Quarantine Action
+                </p>
+                <button id="drawerDisposeBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded-lg text-xs uppercase tracking-wider shadow-sm transition-all active:scale-[0.98] flex items-center justify-center gap-1.5">
+                    <span class="material-symbols-outlined text-base">delete_forever</span>
+                    Dispose Expired Stock
+                </button>
+                <p class="text-[8px] text-red-500/80 leading-relaxed text-center font-medium">This action will quarantine and permanently remove all expired batch quantities from active inventory records.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- State Broker scripts -->
+    <script src="../shared.js"></script>
+    <script>
+        let activeMedicines = [];
+        let currentLedgerFilter = "All";
+        let sortColumn = "name";
+        let sortAsc = true;
+        let selectedSku = null;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            loadLedger();
+
+            // Setup filters
+            document.querySelectorAll(".ledger-filter").forEach(btn => {
+                btn.addEventListener("click", () => {
+                    document.querySelectorAll(".ledger-filter").forEach(b => {
+                        b.className = "ledger-filter bg-surface hover:bg-slate-100 border border-outline-variant/30 text-outline font-bold px-3.5 py-1.5 rounded-lg text-[10px] uppercase transition-all dark:bg-white/5 dark:hover:bg-white/10";
+                    });
+                    btn.className = "ledger-filter bg-primary text-white font-bold px-3.5 py-1.5 rounded-lg text-[10px] uppercase transition-all shadow-sm";
+                    currentLedgerFilter = btn.getAttribute("data-filter");
+                    renderLedgerTable();
+                });
+            });
+
+            // Sorting listeners
+            document.getElementById("sort-name").addEventListener("click", () => triggerSort("name"));
+            document.getElementById("sort-qty").addEventListener("click", () => triggerSort("qty"));
+            document.getElementById("sort-expiry").addEventListener("click", () => triggerSort("expiry"));
+
+            // Drawer binders
+            document.getElementById("closeDrawerBtn").addEventListener("click", hideDrawer);
+            
+            const disposeBtn = document.getElementById("drawerDisposeBtn");
+            if (disposeBtn) {
+                disposeBtn.addEventListener("click", triggerExpiredDisposal);
+            }
+        });
+
+        function loadLedger() {
+            const storeConfig = PharmaDB.getStoreConfig();
+            const storeId = storeConfig.id || 1;
+
+            fetch('/api/search', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ store_id: storeId })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    activeMedicines = data.medicines;
+                    renderLedgerTable();
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                showToast("Connection error while loading ledger data.", false);
+            });
+        }
+
+        function renderLedgerTable() {
+            const meds = [...activeMedicines];
+            const tableBody = document.getElementById("ledger-table-body");
+            tableBody.innerHTML = "";
+
+            // Sorting logic
+            meds.sort((a, b) => {
+                let comparison = 0;
+                
+                if (sortColumn === "name") {
+                    comparison = a.name.localeCompare(b.name);
+                } else if (sortColumn === "qty") {
+                    comparison = a.qty - b.qty;
+                } else if (sortColumn === "expiry") {
+                    const daysA = calculateDaysRemaining(a.expiry_date || "2026-10-15");
+                    const daysB = calculateDaysRemaining(b.expiry_date || "2026-10-15");
+                    comparison = daysA - daysB;
+                }
+                
+                return sortAsc ? comparison : -comparison;
+            });
+
+            // Filter logic
+            let renderedCount = 0;
+            
+            meds.forEach(med => {
+                if (med.qty <= 0) return;
+                
+                const medExpiryDateStr = med.expiry_date ? med.expiry_date.split('T')[0] : "2026-10-15";
+                const daysRemaining = calculateDaysRemaining(medExpiryDateStr);
+                const isCritical = med.qty <= med.par * 0.2 || daysRemaining <= 0;
+                const isExpiry = daysRemaining <= 30;
+                const isCold = med.coldStorage ? true : false;
+
+                let matchesFilter = true;
+                if (currentLedgerFilter === "Critical") matchesFilter = isCritical;
+                else if (currentLedgerFilter === "Expiry") matchesFilter = isExpiry;
+                else if (currentLedgerFilter === "Cold") matchesFilter = isCold;
+
+                if (!matchesFilter) return;
+                renderedCount++;
+
+                const row = document.createElement("tr");
+                row.className = "hover:bg-primary/5 cursor-pointer transition-colors group zebra-stripe border-b border-outline-variant/10";
+                
+                const safeName = med.name.replace(/'/g, "\\'");
+                row.setAttribute("onclick", `showDrawer('${med.sku}', '${safeName}', ${med.qty}, ${med.par}, '${med.rack}', '${med.shelf}', '${med.box}', ${daysRemaining})`);
+
+                // Quantity badge configurations
+                let qtyClass = "text-primary dark:text-[#6cf8bb]";
+                let statusBadge = "bg-primary/10 text-primary dark:bg-primary/20 dark:text-[#6cf8bb] font-bold";
+                let statusLabel = "Stable";
+                
+                if (med.qty <= med.par * 0.2) {
+                    qtyClass = "text-red-600 dark:text-red-400 font-bold";
+                    statusBadge = "bg-red-100 text-red-700 dark:bg-red-950/20 dark:text-red-400 font-bold";
+                    statusLabel = "Critical";
+                } else if (med.qty <= med.par * 0.5) {
+                    qtyClass = "text-amber-600 dark:text-amber-500 font-bold";
+                    statusBadge = "bg-amber-100 text-amber-800 dark:bg-amber-950/20 dark:text-amber-400 font-bold";
+                    statusLabel = "Low Stock";
+                } else if (med.qty >= med.par * 0.9) {
+                    statusLabel = "Saturated";
+                }
+
+                // Countdown labels
+                let countdownLabel = "";
+                let countdownColor = "text-slate-700 dark:text-[#dee4e1]";
+                
+                if (daysRemaining <= 0) {
+                    countdownLabel = "EXPIRED";
+                    countdownColor = "text-red-600 font-black animate-pulse dark:text-red-400";
+                } else if (daysRemaining <= 30) {
+                    countdownLabel = `${daysRemaining} Days Left`;
+                    countdownColor = "text-amber-600 font-black animate-pulse dark:text-amber-400";
+                } else {
+                    countdownLabel = `${daysRemaining} Days`;
+                }
+
+                row.innerHTML = `
+                    <td class="px-6 py-4 font-semibold text-slate-800 dark:text-white font-sans">
+                        <div>${med.name}</div>
+                        <div class="text-[10px] font-mono text-outline uppercase tracking-wider font-semibold mt-0.5">${med.sku}</div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center text-[10px] font-mono text-primary font-black dark:text-[#6cf8bb]">
+                            <span class="px-1.5 py-0.5 bg-surface-container dark:bg-white/5 border rounded mr-1">${med.rack.replace("RACK ", "R-")}</span>
+                            <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+                            <span class="px-1.5 py-0.5 bg-surface-container dark:bg-white/5 border rounded mx-1">${med.shelf.replace("SHELF ", "SH-")}</span>
+                            <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+                            <span class="px-1.5 py-0.5 bg-surface-container dark:bg-white/5 border rounded ml-1">${med.box.replace("BOX ", "BX-")}</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="${qtyClass} font-black font-mono">${med.qty.toLocaleString()}</div>
+                        <div class="text-[9px] text-outline mt-0.5">Par: ${med.par}</div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="font-mono font-bold">${medExpiryDateStr}</div>
+                        <div class="text-[9px] font-bold ${countdownColor}">${countdownLabel}</div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <span class="${statusBadge} px-2.5 py-0.5 rounded text-[9px] uppercase tracking-wider">${statusLabel}</span>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+
+            document.getElementById("tablePaginationText").textContent = `Showing ${renderedCount} of ${activeMedicines.length} localized medicine templates`;
+        }
+
+        function calculateDaysRemaining(dateStr) {
+            const expiry = new Date(dateStr);
+            const today = new Date();
+            const diffTime = expiry - today;
+            return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        }
+
+        function triggerSort(col) {
+            if (sortColumn === col) {
+                sortAsc = !sortAsc;
+            } else {
+                sortColumn = col;
+                sortAsc = true;
+            }
+            renderLedgerTable();
+        }
+
+        function showDrawer(sku, name, qty, par, rack, shelf, box, daysRemaining) {
+            selectedSku = sku;
+            
+            document.getElementById("drawerMedTitle").textContent = name;
+            document.getElementById("drawerSku").textContent = `SKU: ` + sku;
+            document.getElementById("drawerCurrentQty").textContent = qty;
+            document.getElementById("drawerParQty").textContent = par;
+            
+            document.getElementById("drawerRack").textContent = rack;
+            document.getElementById("drawerShelf").textContent = shelf;
+            document.getElementById("drawerBox").textContent = box;
+
+            // Quantity percent calculation
+            const pct = Math.min(Math.round((qty / par) * 100), 100);
+            document.getElementById("drawerQtyPct").textContent = `${pct}%`;
+            
+            const progressBar = document.getElementById("drawerProgressBar");
+            progressBar.style.width = `${pct}%`;
+            
+            // Set progress bar warning color
+            if (pct <= 20) {
+                progressBar.className = "h-full bg-red-600";
+            } else if (pct <= 50) {
+                progressBar.className = "h-full bg-amber-500";
+            } else {
+                progressBar.className = "h-full bg-primary";
+            }
+
+            // Expiry Alert Card updates
+            const alertCard = document.getElementById("drawerExpiryAlertCard");
+            const alertIcon = document.getElementById("drawerExpiryIcon");
+            const alertDays = document.getElementById("drawerExpiryDays");
+            const alertText = document.getElementById("drawerExpiryText");
+            const disposalBox = document.getElementById("drawerDisposalBox");
+            const footer = document.getElementById("drawerFooter");
+
+            if (qty <= 0) {
+                // Treated as stockout!
+                alertCard.className = "bg-red-50 dark:bg-red-950/20 border border-red-500/20 rounded-xl p-4 shadow-sm flex items-start gap-3 border-l-4 border-l-red-500";
+                alertIcon.className = "material-symbols-outlined text-red-600 dark:text-red-400 text-lg";
+                alertIcon.textContent = "error";
+                alertDays.className = "text-sm font-black text-red-600 dark:text-red-400 mt-0.5";
+                alertDays.textContent = "STOCKOUT";
+                alertText.textContent = "Critical alert! No active stock remains in store allocation.";
+                if (disposalBox) disposalBox.classList.add("hidden");
+                if (footer) footer.classList.add("hidden");
+            } else if (daysRemaining <= 0) {
+                alertCard.className = "bg-red-50 dark:bg-red-950/20 border border-red-500/20 rounded-xl p-4 shadow-sm flex items-start gap-3 animate-bounce";
+                alertIcon.className = "material-symbols-outlined text-red-600 dark:text-red-400 text-lg";
+                alertIcon.textContent = "error";
+                alertDays.className = "text-sm font-black text-red-600 dark:text-red-400 mt-0.5";
+                alertDays.textContent = "BATCH EXPIRED";
+                alertText.textContent = "Quarantine stock immediately! Process standard disposal audit.";
+                if (disposalBox) disposalBox.classList.remove("hidden");
+                if (footer) footer.classList.remove("hidden");
+            } else if (daysRemaining <= 30) {
+                alertCard.className = "bg-amber-50 dark:bg-amber-950/20 border border-amber-500/20 rounded-xl p-4 shadow-sm flex items-start gap-3 animate-pulse";
+                alertIcon.className = "material-symbols-outlined text-amber-600 dark:text-amber-400 text-lg";
+                alertIcon.textContent = "warning";
+                alertDays.className = "text-sm font-black text-amber-600 dark:text-amber-400 mt-0.5";
+                alertDays.textContent = `${daysRemaining} Days Left`;
+                alertText.textContent = "Approaching threshold limit. Enforce FIFO immediate stock rotation.";
+                if (disposalBox) disposalBox.classList.add("hidden");
+                if (footer) footer.classList.add("hidden");
+            } else {
+                alertCard.className = "bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-500/20 rounded-xl p-4 shadow-sm flex items-start gap-3";
+                alertIcon.className = "material-symbols-outlined text-emerald-600 dark:text-emerald-400 text-lg";
+                alertIcon.textContent = "check_circle";
+                alertDays.className = "text-sm font-black text-emerald-600 dark:text-emerald-400 mt-0.5";
+                alertDays.textContent = `${daysRemaining} Days Left`;
+                alertText.textContent = "Healthy shelf life. Standard room climate conditions validated.";
+                if (disposalBox) disposalBox.classList.add("hidden");
+                if (footer) footer.classList.add("hidden");
+            }
+
+            // Slide in Drawer
+            document.getElementById("detailsDrawer").classList.remove("translate-x-full");
+        }
+
+        function hideDrawer() {
+            document.getElementById("detailsDrawer").classList.add("translate-x-full");
+        }
+
+        function triggerExpiredDisposal() {
+            const storeConfig = PharmaDB.getStoreConfig();
+            const storeId = storeConfig.id || 1;
+            const activeUser = PharmaDB.getActiveUser();
+
+            fetch('/api/ledger/dispose-expired', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    sku: selectedSku,
+                    store_id: storeId,
+                    pharmacist_id: activeUser.id || 1
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    showToast(data.message || `Disposed expired batches successfully!`);
+                    loadLedger();
+                    hideDrawer();
+                } else {
+                    showToast(data.message || "Failed to dispose expired stock.", false);
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                showToast("Connection error while processing disposal request.", false);
+            });
+        }
+    </script>
+</body>
+</html>

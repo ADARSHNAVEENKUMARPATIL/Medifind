@@ -1,0 +1,44 @@
+<svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0px); }
+    }
+    .floating-tablet {
+      animation: float 4s ease-in-out infinite;
+    }
+  </style>
+  <g class="floating-tablet">
+    <!-- Outer tablet shadow -->
+    <rect x="35" y="25" width="130" height="150" rx="16" fill="rgba(0, 104, 95, 0.08)" />
+    <!-- Outer tablet body -->
+    <rect x="30" y="20" width="140" height="160" rx="18" fill="#1e2927" stroke="#3d4947" stroke-width="4" />
+    <!-- Screen -->
+    <rect x="40" y="32" width="120" height="136" rx="10" fill="#f5faf8" />
+    <!-- Screen content: Header -->
+    <rect x="50" y="44" width="40" height="8" rx="4" fill="#00685f" />
+    <!-- Status bar dots -->
+    <circle cx="140" cy="48" r="3" fill="#006c49" />
+    <circle cx="150" cy="48" r="3" fill="#bcc9c6" />
+    <!-- Medicine cross grid mockup on screen -->
+    <rect x="50" y="62" width="100" height="40" rx="6" fill="#ffffff" stroke="#dee4e1" stroke-width="1.5" />
+    <!-- Green medical cross -->
+    <path d="M96 74v16h8V74h-8zM92 78h16v8H92v-8z" fill="#00685f" />
+    <!-- Barcode mock -->
+    <rect x="50" y="112" width="100" height="20" rx="4" fill="#dee4e1" />
+    <rect x="58" y="116" width="3" height="12" fill="#3d4947" />
+    <rect x="64" y="116" width="6" height="12" fill="#3d4947" />
+    <rect x="73" y="116" width="2" height="12" fill="#3d4947" />
+    <rect x="78" y="116" width="4" height="12" fill="#3d4947" />
+    <rect x="85" y="116" width="8" height="12" fill="#3d4947" />
+    <rect x="96" y="116" width="3" height="12" fill="#3d4947" />
+    <rect x="102" y="116" width="1" height="12" fill="#3d4947" />
+    <rect x="106" y="116" width="5" height="12" fill="#3d4947" />
+    <rect x="114" y="116" width="2" height="12" fill="#3d4947" />
+    <!-- Pulsing target radar circle -->
+    <circle cx="100" cy="82" r="28" stroke="#6cf8bb" stroke-width="1.5" stroke-dasharray="4 2" />
+    <!-- Tablet camera/sensor -->
+    <circle cx="100" cy="26" r="2" fill="#bcc9c6" />
+  </g>
+</svg>

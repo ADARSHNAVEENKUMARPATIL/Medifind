@@ -1,0 +1,78 @@
+/* MediFind Clinical OS - Dashboard, Grid Layouts & KPI Panels Stylesheet */
+
+/* Marquee Scrolling Animation for real-time alerts */
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-content {
+  display: flex;
+  white-space: nowrap;
+  animation: marquee 30s linear infinite;
+}
+
+.marquee-container:hover .marquee-content {
+  animation-play-state: paused;
+}
+
+/* Zebra stripe tables */
+.zebra-stripe:nth-child(even) {
+  background-color: rgba(0, 104, 95, 0.02);
+}
+
+.dark .zebra-stripe:nth-child(even) {
+  background-color: rgba(108, 248, 187, 0.02);
+}
+
+/* Pulse rings for active location coordinates */
+@keyframes pulse-ring {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 104, 95, 0.4);
+  }
+
+  70% {
+    box-shadow: 0 0 0 10px rgba(0, 104, 95, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 104, 95, 0);
+  }
+}
+
+.pulse-location {
+  animation: pulse-ring 1.5s infinite;
+}
+
+/* Barcode scanner laser effect */
+@keyframes scan-line {
+  0% {
+    top: 0%;
+  }
+
+  50% {
+    top: 100%;
+  }
+
+  100% {
+    top: 0%;
+  }
+}
+
+.scanner-laser {
+  animation: scan-line 2.5s infinite linear;
+}
+
+/* Search bar focused glow effect */
+.search-glow:focus-within {
+  box-shadow: 0 0 0 2px var(--primary), 0 4px 12px rgba(0, 104, 95, 0.15);
+}
+
+/* Grid layout metrics cards */
+.metric-card-gradient {
+  background: linear-gradient(135deg, var(--surface) 0%, rgba(0, 104, 95, 0.01) 100%);
+}

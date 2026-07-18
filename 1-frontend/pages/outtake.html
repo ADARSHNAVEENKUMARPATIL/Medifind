@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Stock Outtake Registry | MediFind</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+    <!-- Material Symbols -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0D9488", // Deep Teal (#0D9488) global theme
+                        "primary-container": "#0f766e",
+                        "secondary": "#0f766e",
+                        "secondary-container": "#ccfbf1",
+                        "background": "#f5faf8",
+                        "surface": "#f5faf8",
+                        "on-surface": "#111827",
+                        "on-surface-variant": "#374151",
+                        "outline-variant": "#cbd5e1",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-dim": "#e5e7eb",
+                        "surface-container-high": "#f3f4f6",
+                        "surface-tint": "#0D9488",
+                        "tertiary": "#825100",
+                        "tertiary-fixed": "#ffddb8",
+                        "on-tertiary-fixed-variant": "#653e00",
+                        "error": "#dc2626", // Bright Crimson Red
+                        "error-container": "#fee2e2",
+                        "on-error-container": "#991b1b",
+                        "surface-container-low": "#f0fdfa",
+                        "surface-variant": "#e2e8f0"
+                    },
+                    borderRadius: {
+                        "lg": "0.5rem",
+                        "xl": "1rem"
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="../css/global.css" rel="stylesheet"/>
+    <link href="../css/dashboard.css" rel="stylesheet"/>
+</head>
+<body class="bg-background text-on-surface font-sans overflow-x-hidden min-h-screen dark:bg-[#111716] dark:text-[#edf2f0]">
+
+    <!-- SideNavBar Anchor -->
+    <aside class="fixed left-0 top-0 h-full flex flex-col p-4 h-screen w-64 border-r border-outline-variant/30 bg-white dark:bg-[#151c1b] transition-all duration-200 ease-in-out z-50 shadow-sm">
+        <div class="mb-8 px-2 flex items-center gap-3">
+            <span class="material-symbols-outlined text-primary text-3xl font-bold dark:text-secondary-container">health_and_safety</span>
+            <div>
+                <h1 class="font-headline-md text-base font-bold text-primary leading-none dark:text-[#6cf8bb]">MediFind</h1>
+            </div>
+        </div>
+        
+        <nav class="flex-grow space-y-2">
+            <!-- Dashboard -->
+            <a class="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant hover:bg-surface-container-low transition-colors rounded-lg dark:text-[#dee4e1] dark:hover:bg-white/5" href="dashboard.html">
+                <span class="material-symbols-outlined text-xl">dashboard</span>
+                <span class="text-xs uppercase tracking-wider">Dashboard</span>
+            </a>
+            <!-- Medicine Search -->
+            <a class="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant hover:bg-surface-container-low transition-colors rounded-lg dark:text-[#dee4e1] dark:hover:bg-white/5" href="search.html">
+                <span class="material-symbols-outlined text-xl">search</span>
+                <span class="text-xs uppercase tracking-wider">Medicine Search</span>
+            </a>
+            <!-- Stock Intake -->
+            <a class="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant hover:bg-surface-container-low transition-colors rounded-lg dark:text-[#dee4e1] dark:hover:bg-white/5" href="intake.html">
+                <span class="material-symbols-outlined text-xl">add_box</span>
+                <span class="text-xs uppercase tracking-wider">Stock Intake</span>
+            </a>
+            <!-- Stock Outtake (Active) -->
+            <a class="flex items-center gap-3 px-4 py-2.5 bg-secondary-container text-on-secondary-container font-semibold rounded-lg shadow-sm border border-secondary/15 transition-all dark:bg-primary/20 dark:text-secondary-container" href="outtake.html">
+                <span class="material-symbols-outlined text-xl">outbox</span>
+                <span class="text-xs uppercase tracking-wider">Stock Outtake</span>
+            </a>
+            <!-- Inventory Ledger -->
+            <a class="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant hover:bg-surface-container-low transition-colors rounded-lg dark:text-[#dee4e1] dark:hover:bg-white/5" href="ledger.html">
+                <span class="material-symbols-outlined text-xl">inventory_2</span>
+                <span class="text-xs uppercase tracking-wider">Inventory Ledger</span>
+            </a>
+        </nav>
+        
+        <div class="mt-auto pt-4 border-t border-outline-variant/30 flex items-center gap-3 px-2">
+            <div id="sidebar-avatar" class="w-10 h-10 rounded-full bg-primary-container text-white font-bold flex items-center justify-center text-sm shadow-sm dark:bg-primary/40 dark:text-[#6cf8bb]">
+                SC
+            </div>
+            <div class="overflow-hidden">
+                <p id="sidebar-name" class="text-xs font-semibold truncate text-slate-800 dark:text-white">Pharmacist Profile</p>
+                <p id="sidebar-role" class="text-[10px] text-outline truncate">Chief Pharmacist</p>
+            </div>
+        </div>
+    </aside>
+
+    <!-- TopAppBar Anchor -->
+    <header class="fixed top-0 left-64 right-0 h-16 flex justify-between items-center px-6 bg-white dark:bg-[#151c1b] border-b border-outline-variant/30 z-40 shadow-sm transition-all">
+        <div class="flex items-center gap-4 flex-1">
+            <h2 class="font-headline-md text-lg font-bold text-primary dark:text-[#6cf8bb]">Stock Outtake Registry</h2>
+        </div>
+        
+        <div class="flex items-center gap-4">
+            <!-- Theme Toggle -->
+            <button id="themeToggleBtn" class="p-2 rounded-lg text-on-surface-variant hover:text-primary transition-colors dark:text-[#dee4e1]">
+                <span class="material-symbols-outlined text-xl">contrast</span>
+            </button>
+            <button onclick="window.location.href='welcome.html'" class="text-on-surface-variant hover:text-red-600 transition-colors dark:text-[#dee4e1]" title="Lock Console">
+                <span class="material-symbols-outlined text-xl">lock</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Canvas -->
+    <main class="ml-64 pt-24 p-6 min-h-screen">
+        <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 animate-fade-in-up">
+            
+            <!-- Left Column: Outtake Dispatch Form -->
+            <section class="lg:col-span-5 bg-white dark:bg-[#151c1b] border border-outline-variant/30 rounded-xl p-6 shadow-sm flex flex-col justify-between">
+                <div class="space-y-4">
+                    <div class="border-b border-outline-variant/20 pb-2.5">
+                        <h3 class="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-wider">Log Outbound Dispatch</h3>
+                        <p class="text-[10px] text-outline mt-0.5 font-medium">Record inventory stock deduction, quarantine, or disposal.</p>
+                    </div>
+
+                    <!-- Insufficient Stock Bright Crimson Red Alert Banner -->
+                    <div id="insufficientAlert" class="hidden bg-red-50 dark:bg-red-950/20 border border-red-500/30 p-3.5 rounded-lg flex gap-2.5 items-start animate-bounce">
+                        <span class="material-symbols-outlined text-red-600 dark:text-red-400 text-lg">error</span>
+                        <div>
+                            <h4 class="text-[11px] font-bold text-red-800 dark:text-red-400 uppercase">Stock Outage Aborted</h4>
+                            <p id="insufficientText" class="text-[10px] leading-relaxed text-red-700 dark:text-red-400 font-semibold mt-0.5">
+                                Error: Insufficient stock available in this batch!
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Success Alert Banner -->
+                    <div id="successAlert" class="hidden bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-500/30 p-3.5 rounded-lg flex gap-2.5 items-start">
+                        <span class="material-symbols-outlined text-emerald-600 dark:text-emerald-400 text-lg">check_circle</span>
+                        <div>
+                            <h4 class="text-[11px] font-bold text-emerald-800 dark:text-emerald-400 uppercase">Dispatch Confirmed</h4>
+                            <p id="successText" class="text-[10px] leading-relaxed text-emerald-700 dark:text-emerald-400 font-semibold mt-0.5">
+                                Inventory balances successfully updated and logged.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Dispatch Form -->
+                    <form id="outtakeForm" class="space-y-4" onsubmit="return false;">
+                        
+                        <!-- Select Medicine Dropdown -->
+                        <div>
+                            <label for="medSelect" class="block text-[9px] font-bold uppercase tracking-widest text-outline mb-1.5">Select Medicine Product</label>
+                            <select id="medSelect" required class="w-full bg-surface dark:bg-[#1a2221] border border-outline-variant/40 rounded-lg px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-primary focus:border-primary transition-all">
+                                <option value="" disabled selected>-- Choose Catalog Medicine --</option>
+                                <!-- Loaded dynamically -->
+                            </select>
+                        </div>
+
+                        <!-- Batch Selection Dropdown -->
+                        <div>
+                            <label for="batchSelect" class="block text-[9px] font-bold uppercase tracking-widest text-outline mb-1.5">Target Inventory Batch</label>
+                            <select id="batchSelect" required disabled class="w-full bg-surface dark:bg-[#1a2221] border border-outline-variant/40 rounded-lg px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-primary focus:border-primary transition-all disabled:opacity-50">
+                                <option value="" disabled selected>-- Choose Active Batch --</option>
+                                <!-- Populates dynamically when medicine is chosen -->
+                            </select>
+                        </div>
+
+                        <!-- Grid: Quantity & Reason -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Outtake Quantity -->
+                            <div>
+                                <label for="outtakeQty" class="block text-[9px] font-bold uppercase tracking-widest text-outline mb-1.5">Outtake Quantity</label>
+                                <input type="number" id="outtakeQty" min="1" placeholder="e.g. 20" required class="w-full bg-surface dark:bg-[#1a2221] border border-outline-variant/40 rounded-lg px-3 py-2 text-xs font-bold font-mono focus:ring-2 focus:ring-primary focus:border-primary transition-all"/>
+                            </div>
+
+                            <!-- Reason Code -->
+                            <div>
+                                <label for="reasonCode" class="block text-[9px] font-bold uppercase tracking-widest text-outline mb-1.5">Outtake Reason Code</label>
+                                <select id="reasonCode" required class="w-full bg-surface dark:bg-[#1a2221] border border-outline-variant/40 rounded-lg px-3 py-2 text-xs font-semibold focus:ring-2 focus:ring-primary focus:border-primary transition-all">
+                                    <option value="Dispatched (Sale/Prescription)">Dispatched (Sale/Prescription)</option>
+                                    <option value="Quarantined (Damaged/Recalled)">Quarantined (Damaged/Recalled)</option>
+                                    <option value="Expired Disposal">Expired Disposal</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Live Stock Counter Visualizer Badge -->
+                        <div class="bg-surface-container-low dark:bg-white/5 border border-outline-variant/20 rounded-lg p-3 flex justify-between items-center">
+                            <div>
+                                <div class="text-[8px] text-outline font-bold uppercase tracking-wider">Active Batch Balance</div>
+                                <div id="liveBatchDetails" class="text-[10px] font-medium text-slate-800 dark:text-white mt-0.5">Select a batch to inspect stock.</div>
+                            </div>
+                            <div class="text-right">
+                                <span id="liveBalanceBadge" class="bg-slate-100 text-slate-700 dark:bg-white/10 dark:text-slate-300 font-black font-mono text-xs px-2.5 py-1 rounded">--</span>
+                            </div>
+                        </div>
+
+                        <button id="processOuttakeBtn" class="w-full bg-primary hover:bg-primary-container text-white dark:bg-primary dark:text-white dark:hover:bg-[#0f766e] font-bold py-3 rounded-lg text-xs uppercase tracking-wider shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-1.5 pt-3">
+                            <span class="material-symbols-outlined text-base">outbox</span>
+                            Authorize Stock Outtake
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Right Column: Live Outtake Ticker -->
+            <section class="lg:col-span-7 bg-white dark:bg-[#151c1b] border border-outline-variant/30 rounded-xl overflow-hidden flex flex-col h-full shadow-sm">
+                <div class="px-5 py-4 border-b border-outline-variant/20 flex justify-between items-center bg-surface-container-low dark:bg-[#1a2221]">
+                    <h3 class="text-xs font-bold text-slate-800 dark:text-white uppercase tracking-wider">Active Ward Outtake Ticker</h3>
+                    <div class="text-[10px] text-primary dark:text-[#6cf8bb] font-bold uppercase tracking-wider flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 bg-red-500 rounded-full animate-ping"></span>
+                        Live Session Feed
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto flex-grow">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 dark:bg-[#1c2624] text-outline text-[10px] font-bold uppercase tracking-wider border-b border-outline-variant/20">
+                                <th class="px-5 py-3">Time</th>
+                                <th class="px-5 py-3">Medicine</th>
+                                <th class="px-5 py-3">Reason / Action</th>
+                                <th class="px-5 py-3 text-right">Outtake Qty</th>
+                                <th class="px-5 py-3">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="outtakeTickerBody">
+                            <tr>
+                                <td colspan="5" class="px-5 py-8 text-center text-xs text-outline italic">No outbound stock movements logged in this session.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- State management script references -->
+    <script src="../shared.js"></script>
+    <script>
+        let medicines = [];
+        let selectedMedsBatches = [];
+
+        const medSelect = document.getElementById("medSelect");
+        const batchSelect = document.getElementById("batchSelect");
+        const outtakeQtyInput = document.getElementById("outtakeQty");
+        const reasonCodeSelect = document.getElementById("reasonCode");
+        
+        const liveBatchDetails = document.getElementById("liveBatchDetails");
+        const liveBalanceBadge = document.getElementById("liveBalanceBadge");
+        
+        const processBtn = document.getElementById("processOuttakeBtn");
+        const insufficientAlert = document.getElementById("insufficientAlert");
+        const successAlert = document.getElementById("successAlert");
+
+        document.addEventListener("DOMContentLoaded", () => {
+            loadMedicines();
+
+            medSelect.addEventListener("change", handleMedicineChange);
+            batchSelect.addEventListener("change", handleBatchChange);
+            processBtn.addEventListener("click", processOuttake);
+        });
+
+        function loadMedicines() {
+            const storeConfig = PharmaDB.getStoreConfig();
+            const storeId = storeConfig.id || 1;
+
+            fetch('/api/search', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ store_id: storeId })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    medicines = data.medicines;
+                    
+                    // Clear and populate dropdown
+                    medSelect.innerHTML = `<option value="" disabled selected>-- Choose Catalog Medicine --</option>`;
+                    medicines.forEach(m => {
+                        const opt = document.createElement("option");
+                        opt.value = m.sku;
+                        opt.textContent = `${m.name} (${m.sku})`;
+                        medSelect.appendChild(opt);
+                    });
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                showToast("Connection error while fetching medicines list.", false);
+            });
+        }
+
+        function handleMedicineChange() {
+            const sku = medSelect.value;
+            const storeConfig = PharmaDB.getStoreConfig();
+            const storeId = storeConfig.id || 1;
+
+            // Reset UI
+            batchSelect.disabled = true;
+            batchSelect.innerHTML = `<option value="" disabled selected>-- Loading Batches... --</option>`;
+            liveBatchDetails.textContent = "Select a batch to inspect stock.";
+            liveBalanceBadge.textContent = "--";
+            liveBalanceBadge.className = "bg-slate-100 text-slate-700 dark:bg-white/10 dark:text-slate-300 font-black font-mono text-xs px-2.5 py-1 rounded";
+            resetAlerts();
+
+            // Fetch batches
+            fetch('/api/batches', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ store_id: storeId, sku: sku })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    selectedMedsBatches = data.batches;
+                    
+                    batchSelect.innerHTML = `<option value="" disabled selected>-- Choose Active Batch --</option>`;
+                    if (selectedMedsBatches.length === 0) {
+                        batchSelect.innerHTML = `<option value="" disabled selected>-- No Batches In Stock --</option>`;
+                        return;
+                    }
+
+                    selectedMedsBatches.forEach(b => {
+                        const opt = document.createElement("option");
+                        opt.value = b.id;
+                        opt.textContent = `Batch ID #${b.id} (Expiry: ${b.expiry_date}) [Qty: ${b.current_qty}]`;
+                        batchSelect.appendChild(opt);
+                    });
+                    
+                    batchSelect.disabled = false;
+                } else {
+                    batchSelect.innerHTML = `<option value="" disabled selected>-- Failed to load batches --</option>`;
+                    showToast(data.message || "Failed to load batches.", false);
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                batchSelect.innerHTML = `<option value="" disabled selected>-- Server Error --</option>`;
+            });
+        }
+
+        function handleBatchChange() {
+            const batchId = parseInt(batchSelect.value);
+            const batch = selectedMedsBatches.find(b => b.id === batchId);
+            resetAlerts();
+
+            if (batch) {
+                liveBatchDetails.innerHTML = `<strong>Batch ID:</strong> #${batch.id} &bull; <strong>Expiry:</strong> ${batch.expiry_date}`;
+                liveBalanceBadge.textContent = `${batch.current_qty} Units`;
+                
+                // Colorize balance badge
+                if (batch.current_qty <= 10) {
+                    liveBalanceBadge.className = "bg-red-100 text-red-700 dark:bg-red-950/20 dark:text-red-400 font-black font-mono text-xs px-2.5 py-1 rounded";
+                } else if (batch.current_qty <= 40) {
+                    liveBalanceBadge.className = "bg-amber-100 text-amber-800 dark:bg-amber-950/20 dark:text-amber-400 font-black font-mono text-xs px-2.5 py-1 rounded";
+                } else {
+                    liveBalanceBadge.className = "bg-teal-100 text-teal-800 dark:bg-teal-950/20 dark:text-teal-400 font-black font-mono text-xs px-2.5 py-1 rounded";
+                }
+            }
+        }
+
+        function resetAlerts() {
+            insufficientAlert.classList.add("hidden");
+            successAlert.classList.add("hidden");
+            outtakeQtyInput.classList.remove("border-red-500", "focus:ring-red-500", "focus:border-red-500");
+            batchSelect.classList.remove("border-red-500", "focus:ring-red-500", "focus:border-red-500");
+        }
+
+        function processOuttake() {
+            const sku = medSelect.value;
+            const batchId = parseInt(batchSelect.value);
+            const qty = parseInt(outtakeQtyInput.value);
+            const reason = reasonCodeSelect.value;
+
+            if (!sku || isNaN(batchId) || isNaN(qty) || qty <= 0) {
+                showToast("Please fully complete the outtake parameters and check quantity.", false);
+                return;
+            }
+
+            const storeConfig = PharmaDB.getStoreConfig();
+            const storeId = storeConfig.id || 1;
+            const activeUser = PharmaDB.getActiveUser();
+            const pharmacistId = activeUser.id || 1;
+
+            resetAlerts();
+
+            // Perform active client-side check first for immediate UX feedback
+            const batch = selectedMedsBatches.find(b => b.id === batchId);
+            if (batch && batch.current_qty < qty) {
+                triggerCrimsonFailureAlert();
+                return;
+            }
+
+            // Sync with backend API (Atomic Transaction and database update)
+            fetch('/api/outtake', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    store_id: storeId,
+                    pharmacist_id: pharmacistId,
+                    sku: sku,
+                    batch_id: batchId,
+                    qty: qty,
+                    reason: reason
+                })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    // Update successfully confirmed!
+                    showToast(`Successfully registered outtake of ${qty} units!`);
+                    
+                    const medName = medicines.find(m => m.sku === sku)?.name || "Medicine";
+                    
+                    // Add success alert details
+                    document.getElementById("successText").innerHTML = `Successfully processed outtake of <strong>${qty} units</strong> of ${medName} (Batch #${batchId}) from the inventory ledger.`;
+                    successAlert.classList.remove("hidden");
+                    
+                    // Commit negative variance ticker live feed row
+                    const tickerBody = document.getElementById("outtakeTickerBody");
+                    if (tickerBody.innerHTML.includes("No outbound stock movements logged")) {
+                        tickerBody.innerHTML = "";
+                    }
+
+                    const now = new Date();
+                    const timeStr = now.toTimeString().split(" ")[0];
+
+                    const row = document.createElement("tr");
+                    row.className = "hover:bg-red-50/10 dark:hover:bg-white/5 transition-colors border-b border-outline-variant/10";
+                    row.innerHTML = `
+                        <td class="px-5 py-3.5 font-mono text-[11px] text-outline">${timeStr}</td>
+                        <td class="px-5 py-3.5 font-bold text-slate-800 dark:text-white">
+                            <div>${medName}</div>
+                            <div class="text-[9px] font-mono text-outline mt-0.5">SKU: ${sku} • Batch #${batchId}</div>
+                        </td>
+                        <td class="px-5 py-3.5">
+                            <span class="bg-red-100 text-red-800 dark:bg-red-950/20 dark:text-red-400 px-2 py-0.5 rounded text-[10px] font-bold uppercase">${reason.split(' ')[0]}</span>
+                        </td>
+                        <td class="px-5 py-3.5 text-right font-mono font-bold text-red-600 dark:text-red-400">-${qty}</td>
+                        <td class="px-5 py-3.5">
+                            <div class="flex items-center gap-1 text-[10px] text-emerald-600 font-bold dark:text-emerald-400">
+                                <span class="material-symbols-outlined text-[14px]">cloud_done</span>
+                                LEDGER SYNCED
+                            </div>
+                        </td>
+                    `;
+                    tickerBody.insertBefore(row, tickerBody.firstChild);
+
+                    // Reset form fields
+                    outtakeQtyInput.value = "";
+                    
+                    // Reload batch stock values
+                    handleMedicineChange();
+                } else if (data.insufficient) {
+                    triggerCrimsonFailureAlert();
+                } else {
+                    showToast(data.message || "Failed to process stock outtake.", false);
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                showToast("Connection error during outtake processing.", false);
+            });
+        }
+
+        function triggerCrimsonFailureAlert() {
+            // Apply crimson error outlines and show prominent alert banner instantly
+            outtakeQtyInput.classList.add("border-red-500", "focus:ring-red-500", "focus:border-red-500");
+            batchSelect.classList.add("border-red-500", "focus:ring-red-500", "focus:border-red-500");
+            insufficientAlert.classList.remove("hidden");
+            showToast("Error: Insufficient stock available in this batch!", false);
+        }
+
+
+    </script>
+</body>
+</html>

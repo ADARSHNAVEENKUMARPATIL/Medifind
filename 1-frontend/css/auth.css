@@ -1,0 +1,38 @@
+/* MediFind Clinical OS - Authentication Forms Specific Stylesheet */
+
+/* Credentials and fields glow focus ring animations */
+.auth-input-glow:focus {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px rgba(0, 104, 95, 0.15);
+}
+
+.dark .auth-input-glow:focus {
+  box-shadow: 0 0 0 3px rgba(108, 248, 187, 0.15);
+}
+
+/* Card glassmorphism overlays */
+.auth-glass-card {
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(188, 201, 198, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+.dark .auth-glass-card {
+  background: rgba(21, 28, 27, 0.95);
+  border: 1px solid rgba(61, 73, 71, 0.3);
+}
+
+/* Onboarding strictly required tags */
+.parameter-status-indicator {
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.parameter-status-indicator.filled {
+  color: #006c49;
+  border-color: #6cf8bb;
+}
+
+.dark .parameter-status-indicator.filled {
+  color: #6cf8bb;
+  border-color: #00685f;
+}

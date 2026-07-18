@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Medicine Search & Shelf Locator | MediFind</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+    <!-- Material Symbols -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#00685f",
+                        "primary-container": "#008378",
+                        "secondary": "#006c49",
+                        "secondary-container": "#6cf8bb",
+                        "background": "#f5faf8",
+                        "surface": "#f5faf8",
+                        "on-surface": "#171d1c",
+                        "on-surface-variant": "#3d4947",
+                        "outline-variant": "#bcc9c6",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-dim": "#d6dbd9",
+                        "surface-container-high": "#e4e9e7",
+                        "surface-tint": "#006a61",
+                        "tertiary": "#825100",
+                        "tertiary-fixed": "#ffddb8",
+                        "on-tertiary-fixed-variant": "#653e00",
+                        "error": "#ba1a1a",
+                        "error-container": "#ffdad6",
+                        "on-error-container": "#93000a",
+                        "surface-container-low": "#f0f5f2",
+                        "surface-variant": "#dee4e1"
+                    },
+                    borderRadius: {
+                        "lg": "0.5rem",
+                        "xl": "1rem"
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="../css/global.css" rel="stylesheet"/>
+    <link href="../css/dashboard.css" rel="stylesheet"/>
+</head>
+<body class="bg-background text-on-surface font-sans overflow-x-hidden min-h-screen dark:bg-[#111716] dark:text-[#edf2f0]">
+
+    <!-- SideNavBar Anchor -->
+    <aside class="fixed left-0 top-0 h-full flex flex-col p-4 h-screen w-64 border-r border-outline-variant/30 bg-white dark:bg-[#151c1b] transition-all duration-200 ease-in-out z-50 shadow-sm">
+        <div class="mb-8 px-2 flex items-center gap-3">
+            <span class="material-symbols-outlined text-primary text-3xl font-bold dark:text-secondary-container">health_and_safety</span>
+            <div>
+                <h1 class="font-headline-md text-base font-bold text-primary leading-none dark:text-[#6cf8bb]">MediFind</h1>
+            </div>
+        </div>
+        
+        <nav class="flex-grow space-y-2">
+            <!-- Dashboard -->
+            <a class="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant hover:bg-surface-container-low transition-colors rounded-lg dark:text-[#dee4e1] dark:hover:bg-white/5" href="dashboard.html">
+                <span class="material-symbols-outlined text-xl">dashboard</span>
+                <span class="text-xs uppercase tracking-wider">Dashboard</span>
+            </a>
+            <!-- Medicine Search (Active) -->
+            <a class="flex items-center gap-3 px-4 py-2.5 bg-secondary-container text-on-secondary-container font-semibold rounded-lg shadow-sm border border-secondary/15 transition-all dark:bg-primary/20 dark:text-secondary-container" href="search.html">
+                <span class="material-symbols-outlined text-xl">search</span>
+                <span class="text-xs uppercase tracking-wider">Medicine Search</span>
+            </a>
+            <!-- Stock Intake -->
+            <a class="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant hover:bg-surface-container-low transition-colors rounded-lg dark:text-[#dee4e1] dark:hover:bg-white/5" href="intake.html">
+                <span class="material-symbols-outlined text-xl">add_box</span>
+                <span class="text-xs uppercase tracking-wider">Stock Intake</span>
+            </a>
+            <!-- Stock Outtake -->
+            <a class="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant hover:bg-surface-container-low transition-colors rounded-lg dark:text-[#dee4e1] dark:hover:bg-white/5" href="outtake.html">
+                <span class="material-symbols-outlined text-xl">outbox</span>
+                <span class="text-xs uppercase tracking-wider">Stock Outtake</span>
+            </a>
+            <!-- Inventory Ledger -->
+            <a class="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant hover:bg-surface-container-low transition-colors rounded-lg dark:text-[#dee4e1] dark:hover:bg-white/5" href="ledger.html">
+                <span class="material-symbols-outlined text-xl">inventory_2</span>
+                <span class="text-xs uppercase tracking-wider">Inventory Ledger</span>
+            </a>
+        </nav>
+        
+        <div class="mt-auto pt-4 border-t border-outline-variant/30 flex items-center gap-3 px-2">
+            <div id="sidebar-avatar" class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container font-bold flex items-center justify-center text-sm shadow-sm dark:bg-primary/40 dark:text-[#6cf8bb]">
+                SC
+            </div>
+            <div class="overflow-hidden">
+                <p id="sidebar-name" class="text-xs font-semibold truncate text-slate-800 dark:text-white">Pharmacist Profile</p>
+                <p id="sidebar-role" class="text-[10px] text-outline truncate">Chief Pharmacist</p>
+            </div>
+        </div>
+    </aside>
+
+    <!-- TopAppBar Anchor -->
+    <header class="fixed top-0 left-64 right-0 h-16 flex justify-between items-center px-6 bg-white dark:bg-[#151c1b] border-b border-outline-variant/30 z-40 shadow-sm transition-all">
+        <div class="flex items-center gap-4 flex-1">
+            <h2 class="font-headline-md text-lg font-bold text-primary dark:text-[#6cf8bb]">Inventory Coordinate System</h2>
+        </div>
+        
+        <div class="flex items-center gap-4">
+            <!-- Theme Toggle -->
+            <button id="themeToggleBtn" class="p-2 rounded-lg text-on-surface-variant hover:text-primary transition-colors dark:text-[#dee4e1]">
+                <span class="material-symbols-outlined text-xl">contrast</span>
+            </button>
+            <button onclick="localStorage.removeItem('ps_active_user'); window.location.href='index.html'" class="text-on-surface-variant hover:text-red-600 transition-colors dark:text-[#dee4e1]" title="Lock Console">
+                <span class="material-symbols-outlined text-xl">lock</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Canvas -->
+    <main class="ml-64 pt-24 p-6 min-h-screen">
+        <div class="max-w-6xl mx-auto space-y-6 animate-fade-in-up">
+            
+            <!-- Search & Filters Section -->
+            <section class="space-y-4">
+                <div class="flex items-end justify-between">
+                    <div>
+                        <h2 class="text-xl font-bold font-headline-md text-primary dark:text-[#6cf8bb]">Medicine shelf Locator</h2>
+                        <p class="text-xs text-on-surface-variant dark:text-outline-variant">Real-time localized warehouse storage coordinate mapping.</p>
+                    </div>
+                    <div class="flex items-center gap-1.5 px-3 py-1 bg-surface-container-high rounded-full text-secondary text-[10px] font-bold dark:bg-[#1a2221] dark:text-[#6cf8bb]">
+                        <span class="material-symbols-outlined text-sm pulse-location">cloud_done</span>
+                        Database Synced: Live
+                    </div>
+                </div>
+
+                <!-- Main Barcode / Text Input Search Bar -->
+                <div class="relative group">
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary dark:text-[#6cf8bb] text-xl">search</span>
+                    <input id="medicineSearch" type="text" autocomplete="off" placeholder="Search by SKU, medicine name, rack, or chemical class..." class="w-full h-12 pl-12 pr-6 bg-white dark:bg-[#151c1b] border border-outline-variant/40 rounded-xl text-xs font-semibold focus:outline-none search-glow transition-all duration-300 shadow-sm"/>
+                </div>
+
+                <!-- Category Filters chips -->
+                <div id="categoryChips" class="flex flex-wrap gap-2 pt-1">
+                    <button class="chip-filter px-3 py-1 bg-primary text-white font-bold rounded-full text-[10px] uppercase transition-all shadow-sm" data-category="All">All Categories</button>
+                    <button class="chip-filter px-3 py-1 bg-white dark:bg-white/5 border border-outline-variant/30 hover:bg-slate-50 dark:hover:bg-white/10 rounded-full text-[10px] uppercase font-bold text-outline transition-all" data-category="Antipyretic">Antipyretics</button>
+                    <button class="chip-filter px-3 py-1 bg-white dark:bg-white/5 border border-outline-variant/30 hover:bg-slate-50 dark:hover:bg-white/10 rounded-full text-[10px] uppercase font-bold text-outline transition-all" data-category="Antibiotic">Antibiotics</button>
+                    <button class="chip-filter px-3 py-1 bg-white dark:bg-white/5 border border-outline-variant/30 hover:bg-slate-50 dark:hover:bg-white/10 rounded-full text-[10px] uppercase font-bold text-outline transition-all" data-category="Cardiovascular">Cardiovascular</button>
+                    <button class="chip-filter px-3 py-1 bg-white dark:bg-white/5 border border-outline-variant/30 hover:bg-slate-50 dark:hover:bg-white/10 rounded-full text-[10px] uppercase font-bold text-outline transition-all" data-category="Cold Chain">Cold Chain</button>
+                    <button class="chip-filter px-3 py-1 bg-white dark:bg-white/5 border border-outline-variant/30 hover:bg-slate-50 dark:hover:bg-white/10 rounded-full text-[10px] uppercase font-bold text-outline transition-all" data-category="Antidiabetic">Antidiabetics</button>
+                    <button class="chip-filter px-3 py-1 bg-white dark:bg-white/5 border border-outline-variant/30 hover:bg-slate-50 dark:hover:bg-white/10 rounded-full text-[10px] uppercase font-bold text-outline transition-all" data-category="Gastrointestinal">Gastrointestinal</button>
+                </div>
+            </section>
+
+            <!-- Results Section: Bento Grid -->
+            <section>
+                <div id="resultsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <div class="col-span-full py-12 text-center text-xs text-outline italic">Fetching medicines from database...</div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- Floating Graphic Map Modal overlay -->
+    <div id="mapModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-[100] flex items-center justify-center p-4 hidden transition-opacity duration-300">
+        <div class="bg-white dark:bg-[#151c1b] border border-outline-variant/40 rounded-xl overflow-hidden w-full max-w-4xl shadow-2xl flex flex-col md:flex-row h-[520px] transition-all transform scale-95 opacity-0 duration-300">
+            
+            <!-- Left: Graphic Coordinate Matrix Grid map -->
+            <div class="md:w-1/2 p-6 bg-slate-900 flex flex-col justify-between text-white border-b md:border-b-0 md:border-r border-slate-800">
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <p class="text-[9px] font-bold text-emerald-400 uppercase tracking-widest leading-none">Coordinates Map</p>
+                        <h4 id="modalCoordinates" class="text-sm font-bold font-mono mt-1 text-white">RACK 04 • SHELF B • BOX 12</h4>
+                    </div>
+                    <span id="targetLocationBadge" class="bg-primary/20 text-[#6cf8bb] border border-primary/40 rounded px-2.5 py-0.5 text-[10px] font-mono font-black">RACK 04</span>
+                </div>
+
+                <!-- Live Matrix Visualization grid -->
+                <div class="flex-grow flex items-center justify-center">
+                    <div class="w-full max-w-xs grid grid-cols-4 gap-2 aspect-[4/3] bg-slate-950 p-3 rounded-lg border border-slate-800 relative shadow-inner">
+                        <!-- Simulated shelf grid nodes -->
+                        <div class="cell-map" data-cell="SHELF A-1"></div>
+                        <div class="cell-map" data-cell="SHELF A-2"></div>
+                        <div class="cell-map" data-cell="SHELF A-3"></div>
+                        <div class="cell-map" data-cell="SHELF A-4"></div>
+                        
+                        <div class="cell-map" data-cell="SHELF B-5"></div>
+                        <div class="cell-map" data-cell="SHELF B-6"></div>
+                        <div class="cell-map" data-cell="SHELF B-7"></div>
+                        <div class="cell-map" data-cell="SHELF B-8"></div>
+                        
+                        <div class="cell-map" data-cell="SHELF C-9"></div>
+                        <div class="cell-map" data-cell="SHELF C-10"></div>
+                        <div class="cell-map" data-cell="SHELF C-11"></div>
+                        <div class="cell-map" data-cell="SHELF C-12"></div>
+                    </div>
+                </div>
+
+                <p class="text-[9px] text-slate-500 leading-normal mt-4 text-center">Highlighted grid represents coordinate matching index. Access limited to warehouse operators.</p>
+            </div>
+
+            <!-- Right: Path Directions & Details -->
+            <div class="md:w-1/2 p-6 md:p-8 flex flex-col justify-between bg-white dark:bg-[#151c1b]">
+                <div class="flex justify-between items-start">
+                    <div class="space-y-1">
+                        <p class="text-[9px] font-bold text-outline uppercase tracking-wider">Target Medicine</p>
+                        <h3 id="modalMedTitle" class="text-base font-bold font-headline-md text-slate-800 dark:text-white">Amoxicillin 250mg</h3>
+                    </div>
+                    <button id="closeModalBtn" class="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-white/10 transition-colors">
+                        <span class="material-symbols-outlined text-outline">close</span>
+                    </button>
+                </div>
+
+                <!-- Visual Route Direction Path map list -->
+                <div class="space-y-4 my-6">
+                    <span class="text-[10px] font-bold text-primary dark:text-[#6cf8bb] uppercase tracking-wider block border-b border-outline-variant/20 pb-1.5">Route Directions</span>
+                    
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-3.5">
+                            <span class="w-5 h-5 rounded-full bg-primary/10 text-primary dark:bg-primary/20 dark:text-[#6cf8bb] flex items-center justify-center font-mono text-[10px] font-bold">1</span>
+                            <div>
+                                <p class="text-[10px] text-slate-800 font-bold dark:text-white font-sans">Enter Storage Zone A</p>
+                                <p id="pathAisle" class="text-[9px] text-outline font-semibold">AISLE 4</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3.5">
+                            <span class="w-5 h-5 rounded-full bg-primary/10 text-primary dark:bg-primary/20 dark:text-[#6cf8bb] flex items-center justify-center font-mono text-[10px] font-bold">2</span>
+                            <div>
+                                <p class="text-[10px] text-slate-800 font-bold dark:text-white font-sans">Locate Vertical Stack Frame</p>
+                                <p id="pathRack" class="text-[9px] text-outline font-semibold">RACK 04</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3.5">
+                            <span class="w-5 h-5 rounded-full bg-primary/10 text-primary dark:bg-primary/20 dark:text-[#6cf8bb] flex items-center justify-center font-mono text-[10px] font-bold">3</span>
+                            <div>
+                                <p class="text-[10px] text-slate-800 font-bold dark:text-white font-sans">Extract Coordinate Drawer Bin</p>
+                                <p id="pathShelfBox" class="text-[9px] text-outline font-semibold">SHELF B, BOX 12</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Temperature Seal check bar -->
+                <div class="bg-surface dark:bg-white/5 p-3 rounded-lg border border-outline-variant/35 flex items-center gap-2.5 shadow-inner">
+                    <span class="material-symbols-outlined text-primary text-xl dark:text-[#6cf8bb]">thermostat</span>
+                    <div class="text-[9px]">
+                        <p class="font-bold text-slate-800 dark:text-white">STORAGE REQUIREMENTS</p>
+                        <span id="tempRequirement">Ambient Temperature Controlled.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- State Broker scripts -->
+    <script src="../shared.js"></script>
+    <script src="../js/search.js"></script>
+</body>
+</html>
