@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
 
-const connectionString = process.env.DATABASE_URL || 'postgresql://postgres:Gandu@localhost:5432/medifind_db';
+const connectionString = process.env.DATABASE_URL || 'postgresql://postgres:password@localhost:5432/medifind_db';
 
 async function initializeDatabase() {
     console.log("⚙️ Initiating MediFind Database Provisioning Wizard...");
